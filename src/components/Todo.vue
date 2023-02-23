@@ -20,6 +20,18 @@
 <script>
 export default {
   name: 'TodoComponent',
+  beforeMount() {
+    // Handle saving & loading of the todos
+    window.addEventListener("beforeunload", this.saveList)
+    if(window.localStorage.length !== 0 && window.localStorage.getItem("list") !== this.todos) {
+      this.todos = JSON.parse(window.localStorage.getItem("list"))
+    }
+  },
+  mounted() {
+    // Check if the status is correct & calculate completed tasks
+    this.calcCompleted()
+    this.checkStatus()
+  },
   data() {
     return {
       input: '',
@@ -75,6 +87,9 @@ export default {
           this.$refs.btn[i].innerText = '✓'
         }
       }
+    },
+    saveList () {
+      window.localStorage.setItem("list", JSON.stringify(this.todos))
     }
   }
 }
