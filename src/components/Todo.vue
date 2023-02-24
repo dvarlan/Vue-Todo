@@ -1,20 +1,24 @@
 <template>
-  <h1>Vue Todo List</h1>
-  <h3>Completed: {{ completed }}/{{ todos.length }}</h3>
-  <input type="text" placeholder="Enter a new task..." v-model="input">
-  <button @click="addTodo">Submit</button>
-  <table>
-    <tr>
-      <th>Task</th>
-      <th>Status</th>
-    </tr>
-    <tr v-for="(task, index) in todos" :key="index">
-      <th>{{ task.title }}</th>
-      <th>{{ task.status }}</th>
-      <th><button @click="changeStatus(index)" ref="btn">✓</button></th>
-      <th><button @click="deleteTask(index)">Delete</button></th>
-    </tr>
-  </table>
+  <div id="appWrapper">
+    <h1>Vue Todo List</h1>
+    <h3>Completed: {{ completed }}/{{ todos.length }}</h3>
+    <input id="inputField" type="text" placeholder="Enter a new task..." v-model="input">
+    <button class="btn" @click="addTodo">Submit</button>
+    <div id="tableWrapper">
+      <table>
+          <tr>
+            <th>Task</th>
+            <th>Status</th>
+          </tr>
+        <tr v-for="(task, index) in todos" :key="index">
+          <th :class="getStatus(index)">{{ task.title }}</th>
+          <th>{{ task.status }}</th>
+          <th><button class="btn" @click="changeStatus(index)" ref="btn">✓</button></th>
+          <th><button class="btn" @click="deleteTask(index)">Delete</button></th>
+        </tr>
+      </table>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -23,7 +27,7 @@ export default {
   beforeMount() {
     // Handle saving & loading of the todos
     window.addEventListener("beforeunload", this.saveList)
-    if(window.localStorage.length !== 0 && window.localStorage.getItem("list") !== this.todos) {
+    if (window.localStorage.length !== 0 && window.localStorage.getItem("list") !== this.todos) {
       this.todos = JSON.parse(window.localStorage.getItem("list"))
     }
   },
@@ -88,11 +92,63 @@ export default {
         }
       }
     },
-    saveList () {
+    getStatus(index) {
+      if (this.todos[index].status === 'Done') {
+        return "doneTodo"
+      } else {
+        return "openTodo"
+      }
+    },
+    saveList() {
       window.localStorage.setItem("list", JSON.stringify(this.todos))
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+#appWrapper {
+  text-align: center;
+  font-size: larger;
+}
+
+#tableWrapper {
+  margin-top: 22.464px;
+}
+
+.doneTodo {
+  text-decoration: line-through;
+}
+
+.btn {
+  font-family: inherit;
+  color: inherit;
+  font-size: 15px;
+  background: none;
+  border: 1px solid whitesmoke;
+  border-radius: 3px;
+  padding: 4px 7px;
+  margin-left: 10px;
+}
+
+.btn:hover {
+  background-color: #323232;
+}
+
+#inputField {
+  font-family: inherit;
+  font-size: 15px;
+  color: inherit;
+  height: 20px;
+  background-color: inherit;
+  border: 1px solid whitesmoke;
+  border-radius: 3px;
+  padding: 4px 7px;
+}
+
+#inputField:focus {
+  border: 2px solid whitesmoke;
+  background-color: #323232;
+  outline: none;
+}
+</style>
